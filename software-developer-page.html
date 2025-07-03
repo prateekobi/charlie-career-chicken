@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Explorer - Multiple Components</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            height: 100vh;
+            display: flex;
+        }
+
+        .left-panel {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .left-panel h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: linear-gradient(45deg, #4ade80, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            min-height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .streaming-text {
+            overflow: hidden;
+            border-right: 2px solid #4ade80;
+            white-space: nowrap;
+            animation: blink-cursor 1s infinite;
+        }
+
+        @keyframes blink-cursor {
+            0%, 50% { border-color: #4ade80; }
+            51%, 100% { border-color: transparent; }
+        }
+
+        @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        spline-viewer {
+            width: 100%;
+            height: 65vh;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .spline-container {
+            position: relative;
+            width: 100%;
+            height: 65vh;
+        }
+
+        .floating-tech-button {
+            width: 75%;
+            position: absolute;
+            bottom: 38%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4a5568;
+            color: white;
+            border-radius: 15px;
+            padding: 2rem ;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.8;
+        }
+
+        .floating-tech-button:hover {
+            background: #5a6578;
+            transform: translateX(-50%) translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .floating-tech-button:active {
+            transform: translateX(-50%) translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-icon {
+            width: 30px;
+            height: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .menu-line {
+            width: 100%;
+            height: 2px;
+            background: white;
+            border-radius: 1px;
+        }
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 8px rgba(74, 222, 128, 0.4); }
+            50% { box-shadow: 0 0 16px rgba(74, 222, 128, 0.8); }
+            100% { box-shadow: 0 0 8px rgba(74, 222, 128, 0.4); }
+        }
+
+        .progress-text {
+            font-weight: 600;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+
+        .right-panel {
+            width: 60%;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .job-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: right;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 200px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200"><rect width="400" height="200" fill="%23374151"/><text x="200" y="100" text-anchor="middle" dy=".3em" fill="white" font-family="monospace">Coding Setup Image</text></svg>');
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .thumbnail-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .thumbnail {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+        }
+
+        .description {
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .description strong {
+            font-weight: 600;
+        }
+
+        .match-section {
+            background: rgba(255, 165, 0, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 165, 0, 0.3);
+        }
+
+        .match-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .fire-icon {
+            color: #ff6b35;
+        }
+
+        .match-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .match-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .bullet {
+            color: #4ade80;
+            margin-top: 4px;
+        }
+
+        .info-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .navigation {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 2rem;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .component {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .component.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .jobs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .job-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .job-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .job-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .job-title-card {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+            flex: 1;
+            line-height: 1.3;
+        }
+
+        .favorite-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+            padding: 5px;
+            margin-left: 10px;
+        }
+
+        .favorite-btn:hover {
+            color: rgba(255, 255, 255, 0.8);
+            transform: scale(1.1);
+        }
+
+        .favorite-btn.favorited {
+            color: #ffd700;
+        }
+
+        .job-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .job-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .job-tag {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .welcome-section {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .welcome-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #4ade80, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .welcome-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .favorites-counter {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #ffd700;
+            margin-left: auto;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .left-panel, .right-panel {
+                width: 100%;
+            }
+            
+            .match-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.19/build/spline-viewer.js"></script>
+    <div class="header">
+        <div class="menu-icon">
+            <div class="menu-line"></div>
+            <div class="menu-line"></div>
+            <div class="menu-line"></div>
+        </div>
+    </div>
+
+    <div class="left-panel">
+        <h1 id="streaming-title"></h1>
+        <div class="spline-container">
+            <spline-viewer url="https://prod.spline.design/OGr91UbQ1Dy3lOxM/scene.splinecode"></spline-viewer>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="navigation">
+            <button class="nav-btn active" onclick="switchComponent('welcome')">Welcome</button>
+            <button class="nav-btn" onclick="switchComponent('agriculture')">Agriculture</button>
+            <button class="nav-btn" onclick="switchComponent('ai')">AI Careers</button>
+            <div class="favorites-counter">
+                ⭐ <span id="favorites-count">0</span> Favorites
+            </div>
+        </div>
+
+        <!-- Welcome Component -->
+        <div id="welcome" class="component active">
+            <div class="welcome-section">
+                <h1 class="welcome-title">Career Explorer</h1>
+                <p class="welcome-subtitle">Discover your perfect career path with our comprehensive job exploration platform</p>
+                
+                <div class="welcome-features">
+                    <div class="feature-card">
+                        <div class="feature-icon">🌾</div>
+                        <div class="feature-title">Agriculture Careers</div>
+                        <div class="feature-desc">Explore farming, livestock, and agricultural technology roles</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🤖</div>
+                        <div class="feature-title">AI & Technology</div>
+                        <div class="feature-desc">Discover cutting-edge artificial intelligence and machine learning careers</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⭐</div>
+                        <div class="feature-title">Favorites System</div>
+                        <div class="feature-desc">Save and track your preferred career options</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agriculture Component -->
+        <div id="agriculture" class="component">
+            <h2 class="job-title">Agriculture Careers</h2>
+            <div class="jobs-grid" id="agriculture-grid">
+                <!-- Jobs will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- AI Component -->
+        <div id="ai" class="component">
+            <h2 class="job-title">AI & Technology Careers</h2>
+            <div class="jobs-grid" id="ai-grid">
+                <!-- Jobs will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+
+    <div class="info-icon">i</div>
+
+    <script>
+        const agricultureJobs = [
+            {
+                title: "Poultry Farm Manager",
+                description: "Oversee daily operations of poultry farms, manage staff, ensure animal welfare, and optimize production efficiency.",
+                tags: ["Management", "Animal Care", "Production"]
+            },
+            {
+                title: "Livestock Veterinarian",
+                description: "Provide medical care for farm animals, perform health checks, administer vaccines, and advise on animal nutrition.",
+                tags: ["Veterinary", "Animal Health", "Medical"]
+            },
+            {
+                title: "Agricultural Equipment Operator",
+                description: "Operate and maintain farm machinery, perform field operations, and ensure equipment safety and efficiency.",
+                tags: ["Machinery", "Operations", "Maintenance"]
+            },
+            {
+                title: "Hatchery Technician",
+                description: "Monitor incubation processes, maintain optimal environmental conditions, and ensure successful hatching rates.",
+                tags: ["Technical", "Incubation", "Quality Control"]
+            },
+            {
+                title: "Farm Hand",
+                description: "Assist with daily farm operations, animal feeding, field work, and general maintenance tasks.",
+                tags: ["General Labor", "Animal Care", "Field Work"]
+            }
+        ];
+
+        const aiJobs = [
+            {
+                title: "AI Research Scientist",
+                description: "Conduct cutting-edge research in artificial intelligence, develop new algorithms, and publish scientific papers.",
+                tags: ["Research", "Algorithms", "Innovation"]
+            },
+            {
+                title: "Machine Learning Engineer",
+                description: "Design and implement ML models, optimize algorithms for production, and build scalable AI systems.",
+                tags: ["ML", "Engineering", "Production"]
+            },
+            {
+                title: "Data Scientist",
+                description: "Analyze complex datasets, extract insights, build predictive models, and communicate findings to stakeholders.",
+                tags: ["Analytics", "Statistics", "Modeling"]
+            },
+            {
+                title: "AI Ethics Researcher",
+                description: "Study ethical implications of AI systems, develop responsible AI frameworks, and ensure fair algorithmic decisions.",
+                tags: ["Ethics", "Policy", "Responsibility"]
+            },
+            {
+                title: "Computer Vision Engineer",
+                description: "Develop image and video processing systems, implement object detection, and create visual AI applications.",
+                tags: ["Computer Vision", "Image Processing", "Deep Learning"]
+            }
+        ];
+
+        let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+
+        function updateFavoritesCounter() {
+            document.getElementById('favorites-count').textContent = favorites.length;
+        }
+
+        function addToFavorites(jobTitle) {
+            if (!favorites.includes(jobTitle)) {
+                favorites.push(jobTitle);
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                updateFavoritesCounter();
+                return true;
+            }
+            return false;
+        }
+
+        function removeFromFavorites(jobTitle) {
+            const index = favorites.indexOf(jobTitle);
+            if (index > -1) {
+                favorites.splice(index, 1);
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                updateFavoritesCounter();
+                return true;
+            }
+            return false;
+        }
+
+        function toggleFavorite(jobTitle, button) {
+            if (favorites.includes(jobTitle)) {
+                removeFromFavorites(jobTitle);
+                button.classList.remove('favorited');
+                button.textContent = '☆';
+            } else {
+                addToFavorites(jobTitle);
+                button.classList.add('favorited');
+                button.textContent = '★';
+            }
+        }
+
+        function createJobCard(job) {
+            const isFavorited = favorites.includes(job.title);
+            return `
+                <div class="job-card">
+                    <div class="job-card-header">
+                        <h3 class="job-title-card">${job.title}</h3>
+                        <button class="favorite-btn ${isFavorited ? 'favorited' : ''}" 
+                                onclick="toggleFavorite('${job.title}', this)">
+                            ${isFavorited ? '★' : '☆'}
+                        </button>
+                    </div>
+                    <p class="job-description">${job.description}</p>
+                    <div class="job-tags">
+                        ${job.tags.map(tag => `<span class="job-tag">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function populateJobGrids() {
+            const agricultureGrid = document.getElementById('agriculture-grid');
+            const aiGrid = document.getElementById('ai-grid');
+            
+            agricultureGrid.innerHTML = agricultureJobs.map(createJobCard).join('');
+            aiGrid.innerHTML = aiJobs.map(createJobCard).join('');
+        }
+
+        function switchComponent(componentName) {
+            // Hide all components
+            document.querySelectorAll('.component').forEach(comp => {
+                comp.classList.remove('active');
+            });
+            
+            // Remove active class from all nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected component
+            document.getElementById(componentName).classList.add('active');
+            
+            // Add active class to corresponding nav button
+            event.target.classList.add('active');
+        }
+
+        // Text streaming functionality
+        function streamText(element, text, speed = 75) {
+            return new Promise((resolve) => {
+                element.textContent = '';
+                element.classList.add('streaming-text');
+                
+                let index = 0;
+                const timer = setInterval(() => {
+                    element.textContent += text[index];
+                    index++;
+                    
+                    if (index >= text.length) {
+                        clearInterval(timer);
+                        setTimeout(() => {
+                            element.classList.remove('streaming-text');
+                            resolve();
+                        }, 750);
+                    }
+                }, speed);
+            });
+        }
+
+        function fadeOutAndIn(element, callback) {
+            element.classList.add('fade-out');
+            setTimeout(() => {
+                callback();
+                element.classList.remove('fade-out');
+                element.classList.add('fade-in');
+                setTimeout(() => {
+                    element.classList.remove('fade-in');
+                }, 500);
+            }, 500);
+        }
+
+        // Initialize streaming text sequence
+        async function initializeTextStreaming() {
+            const titleElement = document.getElementById('streaming-title');
+            
+            // Stream first message
+            await streamText(titleElement, "Hi i'm Charlie Career Chicken", 75);
+            
+            // Wait 2 seconds then switch to second message (no streaming)
+            setTimeout(() => {
+                fadeOutAndIn(titleElement, () => {
+                    titleElement.textContent = "What would you like to do today?";
+                });
+            }, 2000);
+        }
+
+        // Farming jobs button functionality
+        function showFarmingJobs() {
+            // Switch to agriculture component which contains farming jobs
+            switchComponent('agriculture');
+            
+            // Add some visual feedback
+            const button = document.querySelector('.floating-tech-button');
+            button.style.background = '#4ade80';
+            button.textContent = 'Loading...';
+            
+            setTimeout(() => {
+                button.style.background = '#4a5568';
+                button.innerHTML = 'Show me<br>some Farming<br>jobs';
+            }, 1000);
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            populateJobGrids();
+            updateFavoritesCounter();
+            initializeTextStreaming();
+        });
+
+        document.querySelector('.info-icon').addEventListener('click', function() {
+            alert(`Career Explorer - Multi-Component System\n\nFavorites: ${favorites.length}\nComponents: Welcome, Agriculture, AI Careers\nText Streaming: Active`);
+        });
+    </script>
+</body>
+</html>
