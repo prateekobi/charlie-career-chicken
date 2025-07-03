@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Explorer - Multiple Components</title>
+    <style>
+        :root {
+            /* Dark theme colors */
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-mid: #16213e;
+            --bg-gradient-end: #0f3460;
+            --text-primary: white;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-tertiary: rgba(255, 255, 255, 0.7);
+            --panel-bg: rgba(0, 0, 0, 0.3);
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --card-hover-bg: rgba(255, 255, 255, 0.15);
+            --card-hover-border: rgba(255, 255, 255, 0.3);
+            --nav-bg: rgba(255, 255, 255, 0.05);
+            --nav-border: rgba(255, 255, 255, 0.3);
+            --nav-hover-bg: rgba(255, 255, 255, 0.1);
+            --nav-hover-border: rgba(255, 255, 255, 0.5);
+            --accent-primary: #4ade80;
+            --accent-secondary: #60a5fa;
+            --match-bg: rgba(255, 165, 0, 0.1);
+            --match-border: rgba(255, 165, 0, 0.3);
+            --favorites-bg: rgba(255, 215, 0, 0.2);
+            --favorites-border: rgba(255, 215, 0, 0.5);
+            --favorites-text: #ffd700;
+        }
+
+        [data-theme="light"] {
+            /* Light theme colors */
+            --bg-gradient-start: #f8fafc;
+            --bg-gradient-mid: #e2e8f0;
+            --bg-gradient-end: #cbd5e1;
+            --text-primary: #1e293b;
+            --text-secondary: rgba(30, 41, 59, 0.8);
+            --text-tertiary: rgba(30, 41, 59, 0.7);
+            --panel-bg: rgba(255, 255, 255, 0.7);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --card-border: rgba(30, 41, 59, 0.1);
+            --card-hover-bg: rgba(255, 255, 255, 0.9);
+            --card-hover-border: rgba(30, 41, 59, 0.2);
+            --nav-bg: rgba(255, 255, 255, 0.3);
+            --nav-border: rgba(30, 41, 59, 0.2);
+            --nav-hover-bg: rgba(255, 255, 255, 0.5);
+            --nav-hover-border: rgba(30, 41, 59, 0.3);
+            --accent-primary: #059669;
+            --accent-secondary: #2563eb;
+            --match-bg: rgba(255, 165, 0, 0.15);
+            --match-border: rgba(255, 165, 0, 0.4);
+            --favorites-bg: rgba(245, 158, 11, 0.15);
+            --favorites-border: rgba(245, 158, 11, 0.4);
+            --favorites-text: #d97706;
+        }
+
+        [data-theme="bluey"] {
+            /* Bluey theme colors - inspired by the Australian cartoon */
+            --bg-gradient-start: #87CEEB;
+            --bg-gradient-mid: #4169E1;
+            --bg-gradient-end: #FF8C00;
+            --text-primary: #2F4F4F;
+            --text-secondary: rgba(47, 79, 79, 0.9);
+            --text-tertiary: rgba(47, 79, 79, 0.8);
+            --panel-bg: rgba(255, 140, 0, 0.2);
+            --card-bg: rgba(135, 206, 235, 0.2);
+            --card-border: rgba(65, 105, 225, 0.3);
+            --card-hover-bg: rgba(135, 206, 235, 0.3);
+            --card-hover-border: rgba(65, 105, 225, 0.5);
+            --nav-bg: rgba(135, 206, 235, 0.15);
+            --nav-border: rgba(65, 105, 225, 0.4);
+            --nav-hover-bg: rgba(135, 206, 235, 0.25);
+            --nav-hover-border: rgba(65, 105, 225, 0.6);
+            --accent-primary: #FF8C00;
+            --accent-secondary: #4169E1;
+            --match-bg: rgba(255, 140, 0, 0.2);
+            --match-border: rgba(255, 140, 0, 0.5);
+            --favorites-bg: rgba(255, 215, 0, 0.2);
+            --favorites-border: rgba(255, 215, 0, 0.6);
+            --favorites-text: #FFD700;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            transition: background 0.5s ease, color 0.3s ease;
+        }
+
+        .left-panel {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background: var(--panel-bg);
+            position: relative;
+            transition: background 0.4s ease;
+        }
+
+        .left-panel h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            min-height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .streaming-text {
+            overflow: hidden;
+            border-right: 2px solid var(--accent-primary);
+            white-space: nowrap;
+            animation: blink-cursor 1s infinite;
+        }
+
+        @keyframes blink-cursor {
+            0%, 50% {
+                border-color: var(--accent-primary);
+            }
+            51%, 100% {
+                border-color: transparent;
+            }
+        }
+
+        @keyframes typewriter {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+            }
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        spline-viewer {
+            width: 100%;
+            height: 65vh;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .spline-container {
+            position: relative;
+            width: 100%;
+            height: 65vh;
+        }
+
+        .floating-tech-button {
+            width: 75%;
+            position: absolute;
+            bottom: 38%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4a5568;
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.8;
+        }
+
+        .floating-tech-button:hover {
+            background: #5a6578;
+            transform: translateX(-50%) translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .floating-tech-button:active {
+            transform: translateX(-50%) translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-icon {
+            width: 30px;
+            height: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .menu-line {
+            width: 100%;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: 1px;
+            transition: background 0.3s ease;
+        }
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 16px rgba(74, 222, 128, 0.8);
+            }
+            100% {
+                box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
+            }
+        }
+
+        .progress-text {
+            font-weight: 600;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+
+        .right-panel {
+            width: 60%;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .job-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: right;
+        }
+
+        .content-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            transition: background 0.4s ease, border-color 0.3s ease;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 200px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200"><rect width="400" height="200" fill="%23374151"/><text x="200" y="100" text-anchor="middle" dy=".3em" fill="white" font-family="monospace">Coding Setup Image</text></svg>');
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .thumbnail-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .thumbnail {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+        }
+
+        .description {
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .description strong {
+            font-weight: 600;
+        }
+
+        .match-section {
+            background: var(--match-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid var(--match-border);
+            transition: background 0.4s ease, border-color 0.3s ease;
+        }
+
+        .match-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .fire-icon {
+            color: #ff6b35;
+        }
+
+        .match-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .match-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .bullet {
+            color: var(--accent-primary);
+            margin-top: 4px;
+        }
+
+        .info-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 70px;
+            width: 40px;
+            height: 40px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .taylor-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 120px;
+            width: 40px;
+            height: 40px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover, .taylor-toggle:hover, .info-icon:hover {
+            background: var(--card-hover-bg);
+            border-color: var(--card-hover-border);
+            transform: translateY(-2px);
+        }
+
+        /* Taylor Swift Magic Effects */
+        .magic-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            font-size: 20px;
+            animation: magicFloat 3s ease-out forwards;
+        }
+
+        .confetti {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            width: 10px;
+            height: 10px;
+            animation: confettiFall 4s ease-out forwards;
+        }
+
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            font-size: 16px;
+            animation: sparkleAnimation 2s ease-out forwards;
+        }
+
+        .heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            font-size: 24px;
+            animation: heartFloat 3.5s ease-out forwards;
+        }
+
+        .glitter {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, #ffd700, #ffb347);
+            border-radius: 50%;
+            animation: glitterTwinkle 2.5s ease-out forwards;
+        }
+
+        @keyframes magicFloat {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg) scale(0.5);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-200px) rotate(180deg) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-400px) rotate(360deg) scale(0.2);
+            }
+        }
+
+        @keyframes confettiFall {
+            0% {
+                opacity: 1;
+                transform: translateY(-100px) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+
+        @keyframes sparkleAnimation {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.5) rotate(180deg);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0) rotate(360deg);
+            }
+        }
+
+        @keyframes heartFloat {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(0.3);
+            }
+            30% {
+                opacity: 1;
+                transform: translateY(-100px) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-300px) scale(0.1);
+            }
+        }
+
+        @keyframes glitterTwinkle {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+            20%, 80% {
+                opacity: 1;
+                transform: scale(1) rotate(90deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.5) rotate(180deg);
+                box-shadow: 0 0 20px #ffd700;
+            }
+        }
+
+        /* Screen flash effect */
+        .bluey-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle, rgba(135, 206, 235, 0.4), rgba(255, 140, 0, 0.3));
+            pointer-events: none;
+            z-index: 8888;
+            opacity: 0;
+            animation: blueyFlash 1s ease-out;
+        }
+
+        @keyframes blueyFlash {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Confetti explosion animations */
+        @keyframes confettiExplosion {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(calc(var(--final-x) - 50vw), calc(var(--final-y) - 50vh)) rotate(720deg) scale(0.3);
+            }
+        }
+
+        @keyframes emojiExplosion {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) rotate(0deg) scale(0.5);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(calc((var(--final-x) - 50vw) * 0.7), calc((var(--final-y) - 50vh) * 0.7)) rotate(360deg) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(calc(var(--final-x) - 50vw), calc(var(--final-y) - 50vh)) rotate(720deg) scale(0.1);
+            }
+        }
+
+        .navigation {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 2rem;
+            padding: 10px;
+            background: var(--nav-bg);
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            transition: background 0.4s ease;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid var(--nav-border);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--nav-hover-bg);
+            border-color: var(--nav-hover-border);
+        }
+
+        .component {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .component.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .jobs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .job-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            position: relative;
+            transition: all 0.3s ease, background 0.4s ease, border-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .job-card:hover {
+            background: var(--card-hover-bg);
+            border-color: var(--card-hover-border);
+            transform: translateY(-5px);
+        }
+
+        .job-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .job-title-card {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+            flex: 1;
+            line-height: 1.3;
+        }
+
+        .favorite-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+            padding: 5px;
+            margin-left: 10px;
+        }
+
+        .favorite-btn:hover {
+            color: rgba(255, 255, 255, 0.8);
+            transform: scale(1.1);
+        }
+
+        .favorite-btn.favorited {
+            color: #ffd700;
+        }
+
+        .job-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .job-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .job-tag {
+            background: var(--card-bg);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            border: 1px solid var(--card-border);
+            transition: background 0.4s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        .welcome-section {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .welcome-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.5;
+            transition: color 0.3s ease;
+        }
+
+        .welcome-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--card-border);
+            transition: background 0.4s ease, border-color 0.3s ease;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .favorites-counter {
+            background: var(--favorites-bg);
+            border: 1px solid var(--favorites-border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--favorites-text);
+            margin-left: auto;
+            transition: background 0.4s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .left-panel, .right-panel {
+                width: 100%;
+            }
+
+            .match-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.20/build/spline-viewer.js"></script>
+<div class="header">
+    <div class="menu-icon">
+        <div class="menu-line"></div>
+        <div class="menu-line"></div>
+        <div class="menu-line"></div>
+    </div>
+</div>
+
+<div class="left-panel">
+    <h1 id="streaming-title"></h1>
+    <div class="spline-container" onclick="traverseFlow()">
+        <spline-viewer url="https://prod.spline.design/OGr91UbQ1Dy3lOxM/scene.splinecode"></spline-viewer>
+    </div>
+</div>
+
+<div class="right-panel">
+    <div class="navigation">
+        <button class="nav-btn active" onclick="switchComponent('welcome')">Welcome</button>
+        <button class="nav-btn" onclick="switchComponent('agriculture')">Agriculture</button>
+        <button class="nav-btn" onclick="switchComponent('ai')">AI Careers</button>
+        <div class="favorites-counter">
+            ⭐ <span id="favorites-count">0</span> Favorites
+        </div>
+    </div>
+
+    <!-- Welcome Component -->
+    <div id="welcome" class="component active">
+        <div class="welcome-section">
+            <h1 class="welcome-title">Career Explorer</h1>
+            <p class="welcome-subtitle">Discover your perfect career path with our comprehensive job exploration
+                platform</p>
+
+            <div class="welcome-features">
+                <div class="feature-card">
+                    <div class="feature-icon">🌾</div>
+                    <div class="feature-title">Agriculture Careers</div>
+                    <div class="feature-desc">Explore farming, livestock, and agricultural technology roles</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <div class="feature-title">AI & Technology</div>
+                    <div class="feature-desc">Discover cutting-edge artificial intelligence and machine learning
+                        careers
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⭐</div>
+                    <div class="feature-title">Favorites System</div>
+                    <div class="feature-desc">Save and track your preferred career options</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agriculture Component -->
+    <div id="agriculture" class="component">
+        <h2 class="job-title">Agriculture Careers</h2>
+        <div class="jobs-grid" id="agriculture-grid">
+            <!-- Jobs will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- AI Component -->
+    <div id="ai" class="component">
+        <h2 class="job-title">AI & Technology Careers</h2>
+        <div class="jobs-grid" id="ai-grid">
+            <!-- Jobs will be populated by JavaScript -->
+        </div>
+    </div>
+</div>
+
+
+<div class="taylor-toggle" onclick="toggleTaylorTheme()">🐕</div>
+<div class="theme-toggle" onclick="toggleTheme()">🌙</div>
+<div class="info-icon">i</div>
+
+<script>
+  const agricultureJobs = [
+    {
+      title: "Poultry Farm Manager",
+      description: "Oversee daily operations of poultry farms, manage staff, ensure animal welfare, and optimize production efficiency.",
+      tags: ["Management", "Animal Care", "Production"]
+    },
+    {
+      title: "Livestock Veterinarian",
+      description: "Provide medical care for farm animals, perform health checks, administer vaccines, and advise on animal nutrition.",
+      tags: ["Veterinary", "Animal Health", "Medical"]
+    },
+    {
+      title: "Agricultural Equipment Operator",
+      description: "Operate and maintain farm machinery, perform field operations, and ensure equipment safety and efficiency.",
+      tags: ["Machinery", "Operations", "Maintenance"]
+    },
+    {
+      title: "Hatchery Technician",
+      description: "Monitor incubation processes, maintain optimal environmental conditions, and ensure successful hatching rates.",
+      tags: ["Technical", "Incubation", "Quality Control"]
+    },
+    {
+      title: "Farm Hand",
+      description: "Assist with daily farm operations, animal feeding, field work, and general maintenance tasks.",
+      tags: ["General Labor", "Animal Care", "Field Work"]
+    }
+  ];
+
+  const aiJobs = [
+    {
+      title: "AI Research Scientist",
+      description: "Conduct cutting-edge research in artificial intelligence, develop new algorithms, and publish scientific papers.",
+      tags: ["Research", "Algorithms", "Innovation"]
+    },
+    {
+      title: "Machine Learning Engineer",
+      description: "Design and implement ML models, optimize algorithms for production, and build scalable AI systems.",
+      tags: ["ML", "Engineering", "Production"]
+    },
+    {
+      title: "Data Scientist",
+      description: "Analyze complex datasets, extract insights, build predictive models, and communicate findings to stakeholders.",
+      tags: ["Analytics", "Statistics", "Modeling"]
+    },
+    {
+      title: "AI Ethics Researcher",
+      description: "Study ethical implications of AI systems, develop responsible AI frameworks, and ensure fair algorithmic decisions.",
+      tags: ["Ethics", "Policy", "Responsibility"]
+    },
+    {
+      title: "Computer Vision Engineer",
+      description: "Develop image and video processing systems, implement object detection, and create visual AI applications.",
+      tags: ["Computer Vision", "Image Processing", "Deep Learning"]
+    }
+  ];
+
+  let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+  
+  // Track if we've changed the Spline scene
+  let splineSceneChanged = false;
+  
+  // Track original spline URL for restoration
+  let originalSplineURL = 'https://prod.spline.design/OGr91UbQ1Dy3lOxM/scene.splinecode';
+  let currentSplineURL = originalSplineURL;
+
+  // Theme functionality
+  function toggleTheme() {
+    const body = document.body;
+    const themeToggle = document.querySelector('.theme-toggle');
+    const taylorToggle = document.querySelector('.taylor-toggle');
+
+    if (body.dataset.theme === 'light') {
+      body.dataset.theme = 'dark';
+      themeToggle.textContent = '🌙';
+      taylorToggle.textContent = '💜';
+      localStorage.setItem('theme', 'dark');
+    } else if (body.dataset.theme === 'bluey') {
+      body.dataset.theme = 'dark';
+      themeToggle.textContent = '🌙';
+      taylorToggle.textContent = '🐕';
+      localStorage.setItem('theme', 'dark');
+    } else {
+      body.dataset.theme = 'light';
+      themeToggle.textContent = '☀️';
+      taylorToggle.textContent = '🐕';
+      localStorage.setItem('theme', 'light');
+    }
+  }
+
+  // Bluey theme toggle
+  function toggleTaylorTheme() {
+    const body = document.body;
+    const themeToggle = document.querySelector('.theme-toggle');
+    const taylorToggle = document.querySelector('.taylor-toggle');
+
+    // Always add confetti explosion when Bluey button is clicked!
+    createBlueyConfettiExplosion();
+
+    if (body.dataset.theme === 'bluey') {
+      // Switch back to dark theme and restore original Spline scene
+      body.dataset.theme = 'dark';
+      themeToggle.textContent = '🌙';
+      taylorToggle.textContent = '🐕';
+      localStorage.setItem('theme', 'dark');
+      
+      // Restore original Spline scene
+      changeToBlueySpline(currentSplineURL); // Restore to whatever was current before Bluey
+      
+    } else {
+      // Store current URL before changing to Bluey
+      const currentViewer = document.querySelector('spline-viewer');
+      if (currentViewer) {
+        currentSplineURL = currentViewer.getAttribute('url');
+      }
+      
+      // Switch to Bluey theme with MAGICAL EFFECTS! 🐕
+      createBlueyMagic();
+      
+      // Change to Bluey Spline scene
+      changeToBlueySpline('https://prod.spline.design/SeWMjUWKnE7oUvlN/scene.splinecode');
+      
+      setTimeout(() => {
+        body.dataset.theme = 'bluey';
+        themeToggle.textContent = '🌙';
+        taylorToggle.textContent = '🎾';
+        localStorage.setItem('theme', 'bluey');
+      }, 200);
+    }
+  }
+
+  // Create over-the-top magical effects for Bluey theme
+  function createBlueyMagic() {
+    console.log('🐕 CREATING BLUEY MAGIC! WACKADOO! 🐕');
+    
+    // Screen flash effect
+    createBlueyScreenFlash();
+    
+    // Create multiple waves of effects
+    createBlueyParticles();
+    createBlueyConfetti();
+    createBlueySparkles();
+    createBlueyPoos();
+    createBlueyGlitter();
+    
+    // Second wave after 500ms
+    setTimeout(() => {
+      createBlueyConfetti();
+      createBlueySparkles();
+      createBlueyGlitter();
+    }, 500);
+    
+    // Third wave after 1000ms
+    setTimeout(() => {
+      createBlueyParticles();
+      createBlueyPoos();
+      createBlueySparkles();
+    }, 1000);
+  }
+
+  function createBlueyScreenFlash() {
+    const flash = document.createElement('div');
+    flash.className = 'bluey-flash';
+    document.body.appendChild(flash);
+    
+    setTimeout(() => {
+      document.body.removeChild(flash);
+    }, 1000);
+  }
+
+  function createBlueyParticles() {
+    const particles = ['🐕', '🦴', '🎾', '🏠', '🌳', '🌞', '🎈', '🚗'];
+    
+    for (let i = 0; i < 25; i++) {
+      setTimeout(() => {
+        const particle = document.createElement('div');
+        particle.className = 'magic-particle';
+        particle.textContent = particles[Math.floor(Math.random() * particles.length)];
+        particle.style.left = Math.random() * 100 + 'vw';
+        particle.style.top = Math.random() * 100 + 'vh';
+        particle.style.color = ['#87CEEB', '#FF8C00', '#4169E1', '#FFD700', '#32CD32'][Math.floor(Math.random() * 5)];
+        
+        document.body.appendChild(particle);
+        
+        setTimeout(() => {
+          if (document.body.contains(particle)) {
+            document.body.removeChild(particle);
+          }
+        }, 3000);
+      }, i * 100);
+    }
+  }
+
+  function createBlueyConfetti() {
+    const colors = ['#87CEEB', '#FF8C00', '#4169E1', '#FFD700', '#32CD32', '#FF6347'];
+    
+    for (let i = 0; i < 50; i++) {
+      setTimeout(() => {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.top = '-50px';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+        
+        document.body.appendChild(confetti);
+        
+        setTimeout(() => {
+          if (document.body.contains(confetti)) {
+            document.body.removeChild(confetti);
+          }
+        }, 4000);
+      }, i * 50);
+    }
+  }
+
+  function createBlueySparkles() {
+    const sparkles = ['🎾', '🦴', '🎈', '🌞', '⚽', '🏆'];
+    
+    for (let i = 0; i < 30; i++) {
+      setTimeout(() => {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+        sparkle.style.left = Math.random() * 100 + 'vw';
+        sparkle.style.top = Math.random() * 100 + 'vh';
+        sparkle.style.color = ['#FF8C00', '#4169E1', '#87CEEB'][Math.floor(Math.random() * 3)];
+        
+        document.body.appendChild(sparkle);
+        
+        setTimeout(() => {
+          if (document.body.contains(sparkle)) {
+            document.body.removeChild(sparkle);
+          }
+        }, 2000);
+      }, i * 80);
+    }
+  }
+
+  function createBlueyPoos() {
+    const poos = ['💩', '🧻', '🚽', '🛁', '🧽', '🧼'];
+    
+    for (let i = 0; i < 20; i++) {
+      setTimeout(() => {
+        const poo = document.createElement('div');
+        poo.className = 'heart';
+        poo.textContent = poos[Math.floor(Math.random() * poos.length)];
+        poo.style.left = Math.random() * 100 + 'vw';
+        poo.style.top = '100vh';
+        
+        document.body.appendChild(poo);
+        
+        setTimeout(() => {
+          if (document.body.contains(poo)) {
+            document.body.removeChild(poo);
+          }
+        }, 3500);
+      }, i * 150);
+    }
+  }
+
+  function createBlueyGlitter() {
+    for (let i = 0; i < 40; i++) {
+      setTimeout(() => {
+        const glitter = document.createElement('div');
+        glitter.className = 'glitter';
+        glitter.style.left = Math.random() * 100 + 'vw';
+        glitter.style.top = Math.random() * 100 + 'vh';
+        glitter.style.background = 'radial-gradient(circle, #FF8C00, #87CEEB)';
+        
+        document.body.appendChild(glitter);
+        
+        setTimeout(() => {
+          if (document.body.contains(glitter)) {
+            document.body.removeChild(glitter);
+          }
+        }, 2500);
+      }, i * 60);
+    }
+  }
+
+  // Confetti explosion specifically for Bluey theme changes
+  function createBlueyConfettiExplosion() {
+    console.log('🎊 BLUEY CONFETTI EXPLOSION! 🎊');
+    
+    const blueyColors = ['#87CEEB', '#FF8C00', '#4169E1', '#FFD700', '#32CD32', '#FF6347', '#9370DB'];
+    const blueyEmojis = ['🐕', '🎾', '🦴', '🎈', '🌞', '🏠', '🎉'];
+    
+    // Create massive confetti burst from center
+    for (let i = 0; i < 100; i++) {
+      setTimeout(() => {
+        // Regular confetti pieces
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = '50vw'; // Start from center
+        confetti.style.top = '50vh';
+        confetti.style.backgroundColor = blueyColors[Math.floor(Math.random() * blueyColors.length)];
+        
+        // Random explosion direction
+        const angle = (Math.random() * 360) * (Math.PI / 180);
+        const velocity = 200 + Math.random() * 300;
+        const finalX = 50 + Math.cos(angle) * (velocity / 10);
+        const finalY = 50 + Math.sin(angle) * (velocity / 10);
+        
+        confetti.style.setProperty('--final-x', finalX + 'vw');
+        confetti.style.setProperty('--final-y', finalY + 'vh');
+        confetti.style.animation = 'confettiExplosion 2s ease-out forwards';
+        
+        document.body.appendChild(confetti);
+        
+        setTimeout(() => {
+          if (document.body.contains(confetti)) {
+            document.body.removeChild(confetti);
+          }
+        }, 2000);
+      }, i * 20);
+    }
+    
+    // Add emoji confetti too!
+    for (let i = 0; i < 30; i++) {
+      setTimeout(() => {
+        const emojiConfetti = document.createElement('div');
+        emojiConfetti.className = 'magic-particle';
+        emojiConfetti.textContent = blueyEmojis[Math.floor(Math.random() * blueyEmojis.length)];
+        emojiConfetti.style.left = '50vw';
+        emojiConfetti.style.top = '50vh';
+        emojiConfetti.style.fontSize = '24px';
+        
+        // Random explosion direction for emojis
+        const angle = (Math.random() * 360) * (Math.PI / 180);
+        const velocity = 150 + Math.random() * 200;
+        const finalX = 50 + Math.cos(angle) * (velocity / 8);
+        const finalY = 50 + Math.sin(angle) * (velocity / 8);
+        
+        emojiConfetti.style.setProperty('--final-x', finalX + 'vw');
+        emojiConfetti.style.setProperty('--final-y', finalY + 'vh');
+        emojiConfetti.style.animation = 'emojiExplosion 2.5s ease-out forwards';
+        
+        document.body.appendChild(emojiConfetti);
+        
+        setTimeout(() => {
+          if (document.body.contains(emojiConfetti)) {
+            document.body.removeChild(emojiConfetti);
+          }
+        }, 2500);
+      }, i * 30);
+    }
+  }
+
+  // Load saved theme
+  function loadTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    const themeToggle = document.querySelector('.theme-toggle');
+    const taylorToggle = document.querySelector('.taylor-toggle');
+
+    document.body.dataset.theme = savedTheme;
+    
+    if (savedTheme === 'bluey') {
+      themeToggle.textContent = '🌙';
+      taylorToggle.textContent = '🎾';
+    } else if (savedTheme === 'light') {
+      themeToggle.textContent = '☀️';
+      taylorToggle.textContent = '🐕';
+    } else {
+      themeToggle.textContent = '🌙';
+      taylorToggle.textContent = '🐕';
+    }
+  }
+
+  function updateFavoritesCounter() {
+    document.getElementById('favorites-count').textContent = favorites.length;
+  }
+
+  function addToFavorites(jobTitle) {
+    if (!favorites.includes(jobTitle)) {
+      favorites.push(jobTitle);
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      updateFavoritesCounter();
+      
+      // Change Spline scene on first favorite addition
+      if (!splineSceneChanged) {
+        changeSplineScene();
+        splineSceneChanged = true;
+      }
+      
+      return true;
+    }
+    return false;
+  }
+  
+  function changeSplineScene() {
+    console.log('🎬 Changing Spline scene...');
+    const splineViewer = document.querySelector('spline-viewer');
+    const splineContainer = document.querySelector('.spline-container');
+    
+    if (splineViewer && splineContainer) {
+      // Remove the old spline-viewer
+      splineViewer.remove();
+      
+      // Create a new spline-viewer with the new URL
+      const newSplineViewer = document.createElement('spline-viewer');
+      newSplineViewer.setAttribute('url', 'https://prod.spline.design/bSnWrCjk2CccXaHD/scene.splinecode');
+      
+      // Append the new viewer to the container
+      splineContainer.appendChild(newSplineViewer);
+      
+      console.log('✅ Spline scene recreated with new URL');
+      
+      // Reset splineApp reference since we have a new viewer
+      splineApp = null;
+      
+      // Set up new event listeners for the new viewer
+      setTimeout(() => {
+        setupSplineEventListeners(newSplineViewer);
+      }, 1000);
+      
+    } else {
+      console.log('❌ Spline viewer or container not found');
+    }
+  }
+
+  function changeToBlueySpline(newURL) {
+    console.log('🐕 Changing to Bluey Spline scene:', newURL);
+    const splineViewer = document.querySelector('spline-viewer');
+    const splineContainer = document.querySelector('.spline-container');
+    
+    if (splineViewer && splineContainer) {
+      // Remove the old spline-viewer
+      splineViewer.remove();
+      
+      // Create a new spline-viewer with the Bluey URL
+      const newSplineViewer = document.createElement('spline-viewer');
+      newSplineViewer.setAttribute('url', newURL);
+      
+      // Append the new viewer to the container
+      splineContainer.appendChild(newSplineViewer);
+      
+      console.log('✅ Bluey Spline scene recreated with URL:', newURL);
+      
+      // Reset splineApp reference since we have a new viewer
+      splineApp = null;
+      
+      // Set up new event listeners for the new viewer
+      setTimeout(() => {
+        setupSplineEventListeners(newSplineViewer);
+      }, 1000);
+      
+    } else {
+      console.log('❌ Spline viewer or container not found');
+    }
+  }
+  
+  function setupSplineEventListeners(viewer) {
+    const events = ['load', 'ready', 'spline-loaded'];
+    
+    events.forEach(eventType => {
+      viewer.addEventListener(eventType, (e) => {
+        console.log(`New spline ${eventType} event triggered`);
+        
+        const possibleSplineRefs = [
+          e.target.spline,
+          e.target._spline,
+          e.target.splineApp,
+          e.target.app,
+          e.detail,
+          e.detail?.spline
+        ];
+        
+        for (let ref of possibleSplineRefs) {
+          if (ref && !splineApp) {
+            splineApp = ref;
+            console.log('✅ New Spline app reference established');
+            break;
+          }
+        }
+      });
+    });
+  }
+
+  function removeFromFavorites(jobTitle) {
+    const index = favorites.indexOf(jobTitle);
+    if (index > -1) {
+      favorites.splice(index, 1);
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      updateFavoritesCounter();
+      return true;
+    }
+    return false;
+  }
+
+  function toggleFavorite(jobTitle, button) {
+    if (favorites.includes(jobTitle)) {
+      removeFromFavorites(jobTitle);
+      button.classList.remove('favorited');
+      button.textContent = '☆';
+    } else {
+      addToFavorites(jobTitle);
+      button.classList.add('favorited');
+      button.textContent = '★';
+    }
+  }
+
+  function createJobCard(job) {
+    const isFavorited = favorites.includes(job.title);
+    return `
+                <div class="job-card">
+                    <div class="job-card-header">
+                        <h3 class="job-title-card">${job.title}</h3>
+                        <button class="favorite-btn ${isFavorited ? 'favorited' : ''}" 
+                                onclick="toggleFavorite('${job.title}', this)">
+                            ${isFavorited ? '★' : '☆'}
+                        </button>
+                    </div>
+                    <p class="job-description">${job.description}</p>
+                    <div class="job-tags">
+                        ${job.tags.map(tag => `<span class="job-tag">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+  }
+
+  function populateJobGrids() {
+    const agricultureGrid = document.getElementById('agriculture-grid');
+    const aiGrid = document.getElementById('ai-grid');
+
+    agricultureGrid.innerHTML = agricultureJobs.map(createJobCard).join('');
+    aiGrid.innerHTML = aiJobs.map(createJobCard).join('');
+  }
+
+  function switchComponent(componentName) {
+    // Hide all components
+    document.querySelectorAll('.component').forEach(comp => {
+      comp.classList.remove('active');
+    });
+
+    // Remove active class from all nav buttons
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+
+    // Show selected component
+    document.getElementById(componentName).classList.add('active');
+
+    // Add active class to corresponding nav button (if called from button click)
+    if (typeof event !== 'undefined' && event.target) {
+      event.target.classList.add('active');
+    } else {
+      // If called programmatically, find and activate the correct button
+      const targetButton = document.querySelector(`.nav-btn[onclick="switchComponent('${componentName}')"]`);
+      if (targetButton) {
+        targetButton.classList.add('active');
+      }
+    }
+  }
+
+  // Text streaming functionality
+  function streamText(element, text, speed = 75) {
+    return new Promise((resolve) => {
+      element.textContent = '';
+      element.classList.add('streaming-text');
+
+      let index = 0;
+      const timer = setInterval(() => {
+        element.textContent += text[index];
+        index++;
+
+        if (index >= text.length) {
+          clearInterval(timer);
+          setTimeout(() => {
+            element.classList.remove('streaming-text');
+            resolve();
+          }, 750);
+        }
+      }, speed);
+    });
+  }
+
+  function fadeOutAndIn(element, callback) {
+    element.classList.add('fade-out');
+    setTimeout(() => {
+      callback();
+      element.classList.remove('fade-out');
+      element.classList.add('fade-in');
+      setTimeout(() => {
+        element.classList.remove('fade-in');
+      }, 500);
+    }, 500);
+  }
+
+  // Initialize streaming text sequence
+  async function initializeTextStreaming() {
+    const titleElement = document.getElementById('streaming-title');
+
+    // Stream first message
+    await streamText(titleElement, "Hi i'm Charlie Career Chicken", 75);
+
+    // Wait 2 seconds then switch to second message (no streaming)
+    setTimeout(() => {
+      fadeOutAndIn(titleElement, () => {
+        titleElement.textContent = "What would you like to do today?";
+      });
+    }, 2000);
+  }
+
+  // Track flow state
+  let agricultureShown = false;
+  let techShown = false;
+
+  function traverseFlow() {
+    if (!agricultureShown) {
+      setTimeout(() => {
+        switchComponent('agriculture');
+        agricultureShown = true;
+      }, 1000);
+    } else if (!techShown) {
+      setTimeout(() => {
+        switchComponent('ai');
+        techShown = true;
+      }, 1000);
+    }
+  }
+
+  // Farming jobs button functionality
+  function showFarmingJobs() {
+    // Switch to agriculture component which contains farming jobs
+    switchComponent('agriculture');
+
+    // Add some visual feedback
+    const button = document.querySelector('.floating-tech-button');
+    button.style.background = '#4ade80';
+    button.textContent = 'Loading...';
+
+    setTimeout(() => {
+      button.style.background = '#4a5568';
+      button.innerHTML = 'Show me<br>some Farming<br>jobs';
+    }, 1000);
+  }
+
+  // Initialize the page
+  document.addEventListener('DOMContentLoaded', function () {
+    loadTheme();
+    populateJobGrids();
+    updateFavoritesCounter();
+    initializeTextStreaming();
+  });
+
+  document.querySelector('.info-icon').addEventListener('click', function () {
+    alert(`Career Explorer - Multi-Component System\n\nFavorites: ${favorites.length}\nComponents: Welcome, Agriculture, AI Careers\nText Streaming: Active`);
+  });
+</script>
+</body>
+</html>
